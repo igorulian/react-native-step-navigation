@@ -1,8 +1,10 @@
+import React, { useEffect, useState } from 'react'
+import type { FC } from 'react'
 import { useStepNavigation } from '../contexts/context'
 import { useNavigation } from '@react-navigation/native'
 import { CardStyleInterpolators } from '@react-navigation/stack'
-import React, { type FC, useEffect, useState } from 'react'
-import { Animated, Easing, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native'
+import { Animated, Easing, StyleSheet, View } from 'react-native'
+import type { StyleProp, ViewStyle } from 'react-native'
 import StepNavigationHeader from './StepNavigationHeader'
 
 const options = {
@@ -11,7 +13,7 @@ const options = {
   cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
 }
 
-interface ContainerProps {
+interface NavigatorProps {
   closeRoute?: string
   children: JSX.Element[]
   title?: string
@@ -28,8 +30,10 @@ interface ScreenProps {
   children?: (props: any) => Element
 }
 
+const EmptyObject = (_: ScreenProps) => <View/>
+
 const Screen = ({ name, component, header = true, progressBar = true, style }: ScreenProps) => {
-  return <View/>
+  return <EmptyObject name={name} component={component} header={header} progressBar={progressBar} style={style}/>
 }
 
 const createStepNavigation = (stack: any) => {
@@ -43,7 +47,7 @@ const createStepNavigation = (stack: any) => {
     return pages
   }
 
-  const Container: FC<ContainerProps> = ({
+  const Navigator: FC<NavigatorProps> = ({
     children,
     title,
     closeRoute,
@@ -51,7 +55,7 @@ const createStepNavigation = (stack: any) => {
   }) => {
     const { previousRoute, rootRoute } = useStepNavigation()
     const pages = getPages(children)
-    const navigation = useNavigation()
+    const navigation = useNavigation<any>()
     const progressbar = useState(new Animated.Value((1 / pages.length) * 100))[0]
     const [currentPage, setCurrentPage] = useState(pages[0])
     const [progress, setProgress] = useState(0)
@@ -68,7 +72,7 @@ const createStepNavigation = (stack: any) => {
     }, [progress])
 
     useEffect(() => {
-      const unsubscribe = navigation.addListener('state', (e) => {
+      const unsubscribe = navigation.addListener('state', (e: any) => {
         const { routes } = e.data.state
         const currentRoutes = routes[routes.length - 1].state?.routes
 
@@ -128,7 +132,7 @@ const createStepNavigation = (stack: any) => {
   }
 
   return {
-    Container,
+    Navigator,
     Screen
   }
 }

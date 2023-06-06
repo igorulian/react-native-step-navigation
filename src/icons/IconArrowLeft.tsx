@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Svg, { type SvgProps, Path } from 'react-native-svg'
+import Svg, { SvgProps, Path } from 'react-native-svg'
 
 const IconArrowLeft = (props: SvgProps) => (
   <Svg data-name="\xCDcone - 24px" width={16} height={16} {...props}>

@@ -1,5 +1,4 @@
-import React from 'react'
-import { createContext, type FC, useContext, useState } from 'react'
+import React, { FC, createContext, useContext, useState } from 'react'
 
 interface Props {
   children?: JSX.Element | JSX.Element[]

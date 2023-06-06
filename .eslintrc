@@ -12,7 +12,7 @@
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": ["tsconfig.json"]
+        "project": ["tsconfig.json", "example/tsconfig.json"]
     },
     "plugins": [
         "react"
@@ -22,6 +22,13 @@
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/no-misused-promises": "off",
         "@typescript-eslint/space-before-function-paren": "off",
-        "@typescript-eslint/no-throw-literal": "off"
+        "@typescript-eslint/no-throw-literal": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/prop-types": "off",
+        "space-before-function-paren": "off",
+        "operator-linebreak": "off",
+        "no-throw-literal": "off",
+        "@typescript-eslint/consistent-type-definitions": "off",
+        "@typescript-eslint/consistent-type-imports": "off"
     }
 }

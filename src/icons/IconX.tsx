@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Svg, { type SvgProps, G, Path } from 'react-native-svg'
+import Svg, { SvgProps, G, Path } from 'react-native-svg'
 
 const IconX = (props: SvgProps) => (
   <Svg width={24} height={24} {...props}>
