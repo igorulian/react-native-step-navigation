@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch -outDir=example/test",
-    "build": "tsdx build && rm -rf example/node_modules/react-native-step-navigation && mv dist example/node_modules/react-native-step-navigation",
+    "build": "tsdx build && rm -rf example/react-native-step-navigation && mv dist example/react-native-step-navigation",
     "dev": "npm run dist -- -w",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",

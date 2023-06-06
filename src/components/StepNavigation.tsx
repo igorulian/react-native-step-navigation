@@ -74,7 +74,10 @@ const createStepNavigation = (stack: any) => {
     useEffect(() => {
       const unsubscribe = navigation.addListener('state', (e: any) => {
         const { routes } = e.data.state
-        const currentRoutes = routes[routes.length - 1].state?.routes
+        console.log('routes', routes)
+        const currentState = routes[routes.length - 1]
+        console.log('currentState', currentState)
+        const currentRoutes = currentState.state?.routes
 
         if (!currentRoutes) { console.log('No current routes'); return }
 
@@ -107,7 +110,7 @@ const createStepNavigation = (stack: any) => {
     })
 
     return (
-        <View style={currentPage.style}>
+        <View style={[{ flex: 1 }, currentPage.style]}>
           {(header && currentPage.header) ?? (
             <>
               <StepNavigationHeader

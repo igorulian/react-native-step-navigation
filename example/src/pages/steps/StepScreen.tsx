@@ -1,3 +1,4 @@
+import React from 'react'
 import { type StackScreenProps } from '@react-navigation/stack'
 import { Button, View } from 'react-native'
 import { type StepStackParamList } from '../../types/step.routes'

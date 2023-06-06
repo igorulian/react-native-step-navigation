@@ -1,4 +1,4 @@
 import createStepNavigation from './components/StepNavigation'
-import { StepNavigationProvider } from './contexts/context'
+import { StepNavigationProvider, useStepNavigation } from './contexts/context'
 
-export { createStepNavigation, StepNavigationProvider }
+export { createStepNavigation, StepNavigationProvider, useStepNavigation }
