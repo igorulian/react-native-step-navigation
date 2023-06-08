@@ -53,9 +53,9 @@ const createStepNavigation = (stack: any) => {
     closeRoute,
     header = true
   }) => {
-    const { previousRoute, rootRoute } = useStepNavigation()
+    const { rootRoute, goBack } = useStepNavigation()
     const pages = getPages(children)
-    const navigation = useNavigation<any>()
+    const navigation = useNavigation()
     const progressbar = useState(new Animated.Value((1 / pages.length) * 100))[0]
     const [currentPage, setCurrentPage] = useState(pages[0])
     const [progress, setProgress] = useState(0)
@@ -74,28 +74,22 @@ const createStepNavigation = (stack: any) => {
     useEffect(() => {
       const unsubscribe = navigation.addListener('state', (e: any) => {
         const { routes } = e.data.state
-        console.log('routes', routes)
+
         const currentState = routes[routes.length - 1]
-        console.log('currentState', currentState)
+
         const currentRoutes = currentState.state?.routes
 
-        if (!currentRoutes) { console.log('No current routes'); return }
+        if (!currentRoutes) return
 
         const currentRoute = currentRoutes[currentRoutes.length - 1]
 
         const cPage = pages.find(page => page.name === currentRoute.name)
 
-        if (!cPage) {
-          console.log('[ERROR]: NO current page found')
-          return
-        }
+        if (!cPage) return
 
         const currentPageIndex = pages.indexOf(cPage)
 
-        if (currentPageIndex === null || currentPageIndex === undefined) {
-          console.log('[ERROR]: CurrentPage without index')
-          return
-        }
+        if (currentPageIndex === null || currentPageIndex === undefined) return
 
         setCurrentPage(cPage)
 
@@ -109,14 +103,24 @@ const createStepNavigation = (stack: any) => {
       outputRange: ['0%', '100%']
     })
 
+    // function goBack() {
+    //   console.log('[ACTION] goBack, to:', previousRoute)
+    //   navigation.navigate(previousRoute as never)
+    // }
+
+    function close() {
+      console.log('[ACTION] close, to:', closeRoute ?? rootRoute)
+      navigation.navigate((closeRoute ?? rootRoute) as never)
+    }
+
     return (
         <View style={[{ flex: 1 }, currentPage.style]}>
           {(header && currentPage.header) ?? (
             <>
               <StepNavigationHeader
                 title={title ?? `Etapa ${progress + 1} de ${pages.length}`}
-                onPressBack={() => { navigation.navigate(previousRoute) }}
-                onPressClose={() => { navigation.navigate(closeRoute ?? rootRoute) }}
+                onPressBack={goBack}
+                onPressClose={close}
               />
               {currentPage.progressBar ?? (
                 <Animated.View style={[style.progressBar, { width: progressBarWidth }]} />
