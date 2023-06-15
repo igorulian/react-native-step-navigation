@@ -11,7 +11,7 @@ const StepScreen = ({ navigation }: Props) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#faf' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ccc'}}>
       <Button onPress={nextStep} title='Next Page'/>
     </View>
   )

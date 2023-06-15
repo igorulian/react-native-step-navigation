@@ -7,12 +7,12 @@ type Props = StackScreenProps<StepStackParamList, 'Step2'>
 
 const StepScreen2 = ({ navigation }: Props) => {
   function goHome() {
-    navigation.getParent()?.navigate('Home')
+    navigation.navigate('Step3')
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#1ff' }}>
-      <Button onPress={goHome} title='go Home'/>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1ff' }}>
+      <Button onPress={goHome} title='Next page'/>
     </View>
   )
 }

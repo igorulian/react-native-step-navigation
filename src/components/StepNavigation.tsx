@@ -4,7 +4,6 @@ import React, { FC, useEffect, useState } from 'react'
 import { Animated, Easing, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from 'react-native'
 import { IRouteType, useStepNavigation } from '../contexts/context'
 import StepNavigationHeader from './StepNavigationHeader'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export interface ProgressFlowProps {
   from: string
@@ -19,6 +18,7 @@ const options = {
 interface IProgressBarStyle {
   height?: number
   color?: string
+  backgroundColor?: string
 }
 
 interface INavigator {
@@ -74,7 +74,6 @@ function createProgressFlow<Param extends ParamListBase>() {
     const progressbar = useState(new Animated.Value((1 / pages.length) * 100))[0]
     const [currentPage, setCurrentPage] = useState(pages[0])
     const [progress, setProgress] = useState(0)
-    const insets = useSafeAreaInsets()
 
     // useEffect(() => {
     //   console.log('from', from)
@@ -157,21 +156,23 @@ function createProgressFlow<Param extends ParamListBase>() {
     })
 
     return (
-        <View style={[{ flex: 1, paddingTop: insets.top }, currentPage.style]}>
+        <View style={[{ flex: 1 }, currentPage.style]}>
           {(header && currentPage.header) ?? (
             <>
               <StepNavigationHeader
-                title={title ?? `Etapa ${progress + 1} de ${pages.length}`}
+                title={title ?? `Step ${progress + 1} of ${pages.length}`}
                 onPressBack={() => { navigation.navigate(previousRoute) }}
                 onPressClose={() => { navigation.navigate(closeRoute ?? rootRoute) }}
                 style={headerStyle}
                 titleStyle={titleStyle}
               />
               {currentPage.progressBar ?? (
-                <Animated.View style={[style.progressBar, { width: progressBarWidth }, {
-                  backgroundColor: progressBarStyle?.color ?? '#000',
-                  height: progressBarStyle?.height ?? 2
-                }]} />
+                <View style={{ width: '100%', backgroundColor: progressBarStyle?.backgroundColor }}>
+                  <Animated.View style={[style.progressBar, { width: progressBarWidth }, {
+                    backgroundColor: progressBarStyle?.color ?? '#000',
+                    height: progressBarStyle?.height ?? 2
+                  }]} />
+                </View>
               )}
             </>
           )}
@@ -196,7 +197,6 @@ export default createProgressFlow
 
 const style = StyleSheet.create({
   progressBar: {
-    height: 2,
-    marginTop: -2
+    height: 2
   }
 })

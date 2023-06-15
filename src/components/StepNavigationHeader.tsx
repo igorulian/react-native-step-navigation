@@ -2,6 +2,8 @@ import React from 'react'
 import { Text, TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native'
 import IconArrowLeft from '../icons/IconArrowLeft'
 import IconX from '../icons/IconX'
+import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { getDefaultHeaderHeight } from '@react-navigation/elements'
 
 interface Props {
   title: string
@@ -12,18 +14,26 @@ interface Props {
 }
 
 const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleStyle }: Props) => {
+  const insets = useSafeAreaInsets()
+  const frame = useSafeAreaFrame()
+  const headerHeight = getDefaultHeaderHeight(frame, false, 0)
+
+  const backgroundColor = StyleSheet.flatten(style) ? StyleSheet.flatten(style).backgroundColor : '#FFF'
+
   return (
-    <View style={[styles.container, style]}>
+    <View style={[{ paddingTop: insets.top, width: '100%', backgroundColor }]}>
+      <View style={[styles.container, { height: headerHeight }, style]}>
 
-      <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
-        <IconArrowLeft />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
+          <IconArrowLeft />
+        </TouchableOpacity>
 
-      <Text style={[styles.title, titleStyle]}>{title}</Text>
+        <Text style={[styles.title, titleStyle]}>{title}</Text>
 
-      <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
-        <IconX />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
+          <IconX />
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
