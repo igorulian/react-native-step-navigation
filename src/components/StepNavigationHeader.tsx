@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Text, TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native'
 import IconArrowLeft from '../icons/IconArrowLeft'
 import IconX from '../icons/IconX'
 
@@ -7,17 +7,19 @@ interface Props {
   title: string
   onPressBack?: () => void
   onPressClose?: () => void
+  style?: StyleProp<ViewStyle>
+  titleStyle?: StyleProp<TextStyle>
 }
 
-const StepNavigationHeader = ({ onPressBack, onPressClose, title }: Props) => {
+const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleStyle }: Props) => {
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, style]}>
 
       <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
         <IconArrowLeft style={{ marginLeft: -3 }} />
       </TouchableOpacity>
 
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, titleStyle]}>{title}</Text>
 
       <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
         <IconX style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}/>
@@ -39,7 +41,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   title: {
-    color: '#7B7B7B',
+    color: '#000',
     fontSize: 14,
     position: 'absolute',
     alignSelf: 'center'

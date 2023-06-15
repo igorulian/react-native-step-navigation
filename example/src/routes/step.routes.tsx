@@ -5,12 +5,11 @@ import StepScreen from '../pages/steps/StepScreen'
 import StepScreen2 from '../pages/steps/StepScreen2'
 import { type StepStackParamList } from '../types/step.routes'
 
-const Stack = createStackNavigator<StepStackParamList>()
-const Step = createStepNavigation(Stack)
+const Step = createStepNavigation<StepStackParamList>()
 
 const StepRoutes = () => {
   return (
-    <Step.Navigator>
+    <Step.Navigator progressBarStyle={{ color: '#F4B301', height: 6}}>
         <Step.Screen name='Step1' component={StepScreen}/>
         <Step.Screen name='Step2' component={StepScreen2}/>
     </Step.Navigator>

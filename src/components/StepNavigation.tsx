@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native'
-import { CardStyleInterpolators } from '@react-navigation/stack'
+import { ParamListBase, useNavigation } from '@react-navigation/native'
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import React, { FC, useEffect, useState } from 'react'
-import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from 'react-native'
+import { Animated, Easing, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from 'react-native'
 import { IRouteType, useStepNavigation } from '../contexts/context'
 import StepNavigationHeader from './StepNavigationHeader'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -16,45 +16,57 @@ const options = {
   cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
 }
 
-interface IProgressFlowContainer {
+interface IProgressBarStyle {
+  height?: number
+  color?: string
+}
+
+interface INavigator {
   closeRoute?: string
   children: JSX.Element[]
   title?: string
   header?: boolean
+  progressBarStyle?: IProgressBarStyle
+  headerStyle?: StyleProp<ViewStyle>
+  titleStyle?: StyleProp<TextStyle>
 }
 
-interface IProgressFlowScreen {
+interface IScreen {
   name: string
-  component?: FC<any>
+  component?: any
   header?: boolean
   progressBar?: boolean
   style?: StyleProp<ViewStyle>
   backRoute?: string
-  children?: (props: any) => Element
+  children?: any
 }
 
-const EmptyObject = (_: IProgressFlowScreen) => <View/>
-
-const ProgressFlowScreen = ({ name, component, header = true, progressBar = true, style }: IProgressFlowScreen) => {
-  return <EmptyObject name={name} component={component} header={header} progressBar={progressBar} style={style}/>
-}
-
-const createProgressFlow = (stack: any) => {
+function createProgressFlow<Param extends ParamListBase>() {
+  const Stack = createStackNavigator<Param>()
   const getPages = (children: JSX.Element[]) => {
-    const pages: IProgressFlowScreen[] = []
+    const pages: IScreen[] = []
 
     children.forEach((item: JSX.Element) => {
-      const screenProps: IProgressFlowScreen = item.props
+      const screenProps: IScreen = item.props
       pages.push(screenProps)
     })
     return pages
   }
 
-  const ProgressFlowContainer: FC<IProgressFlowContainer> = ({
+  const EmptyObject = (_: IScreen) => <View/>
+
+  const Screen = ({ name, component, header = true, progressBar = true, style }: IScreen) => {
+    return <EmptyObject name={name} component={component} header={header} progressBar={progressBar} style={style}/>
+  }
+
+  const Navigator: FC<INavigator> = ({
     children,
     title,
     closeRoute,
-    header = true
+    header = true,
+    progressBarStyle,
+    titleStyle,
+    headerStyle
   }) => {
     const { previousRoute, rootRoute, setRootRoute } = useStepNavigation()
     const pages = getPages(children)
@@ -97,7 +109,6 @@ const createProgressFlow = (stack: any) => {
         }
       }
 
-      console.log('firstRoute', firstRoute)
       setRootRoute(firstRoute)
     }, [])
 
@@ -153,26 +164,31 @@ const createProgressFlow = (stack: any) => {
                 title={title ?? `Etapa ${progress + 1} de ${pages.length}`}
                 onPressBack={() => { navigation.navigate(previousRoute) }}
                 onPressClose={() => { navigation.navigate(closeRoute ?? rootRoute) }}
+                style={headerStyle}
+                titleStyle={titleStyle}
               />
               {currentPage.progressBar ?? (
-                <Animated.View style={[style.progressBar, { width: progressBarWidth }]} />
+                <Animated.View style={[style.progressBar, { width: progressBarWidth }, {
+                  backgroundColor: progressBarStyle?.color ?? '#000',
+                  height: progressBarStyle?.height ?? 2
+                }]} />
               )}
             </>
           )}
-          <stack.Navigator screenOptions={options}>
+          <Stack.Navigator screenOptions={options}>
             {pages.map(item => (
-              <stack.Screen key={item.name} name={item.name} component={item.component}>
+              <Stack.Screen key={item.name} name={item.name} component={item.component}>
                 {item.children}
-              </stack.Screen>
+              </Stack.Screen>
             ))}
-          </stack.Navigator>
+          </Stack.Navigator>
         </View>
     )
   }
 
   return {
-    Navigator: ProgressFlowContainer,
-    Screen: ProgressFlowScreen
+    Navigator,
+    Screen
   }
 }
 
@@ -180,7 +196,6 @@ export default createProgressFlow
 
 const style = StyleSheet.create({
   progressBar: {
-    backgroundColor: '#000',
     height: 2,
     marginTop: -2
   }
