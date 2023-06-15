@@ -16,13 +16,13 @@ const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleSt
     <View style={[styles.container, style]}>
 
       <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
-        <IconArrowLeft style={{ marginLeft: -3 }} />
+        <IconArrowLeft />
       </TouchableOpacity>
 
       <Text style={[styles.title, titleStyle]}>{title}</Text>
 
       <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
-        <IconX style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}/>
+        <IconX />
       </TouchableOpacity>
     </View>
   )

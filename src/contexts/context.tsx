@@ -1,5 +1,5 @@
 import { NavigationState } from '@react-navigation/native'
-import React, { FC, createContext, useContext, useEffect, useState } from 'react'
+import React, { FC, createContext, useContext, useState } from 'react'
 
 interface Props {
   children?: JSX.Element | JSX.Element[]
@@ -25,10 +25,6 @@ export const StepNavigationProvider: FC<Props> = ({ children }) => {
   const [rootRoute, setRootRoute] = useState<string>('')
 
   const previousRoute = history.length >= 2 ? history[history.length - 2] : history[history.length - 1]
-
-  useEffect(() => {
-    console.log('history', history)
-  }, [history])
 
   function addRoute(routeName: string) {
     if (history.includes(routeName)) {

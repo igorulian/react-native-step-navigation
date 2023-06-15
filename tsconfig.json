@@ -1,5 +1,6 @@
 {
   "include": ["src", "types", "example/src"],
+  "exclude": ["example"],
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
