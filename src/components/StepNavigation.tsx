@@ -29,6 +29,8 @@ interface INavigator {
   progressBarStyle?: IProgressBarStyle
   headerStyle?: StyleProp<ViewStyle>
   titleStyle?: StyleProp<TextStyle>
+  iconCloseColor?: string
+  iconBackColor?: string
 }
 
 interface IScreen {
@@ -66,7 +68,9 @@ function createProgressFlow<Param extends ParamListBase>() {
     header = true,
     progressBarStyle,
     titleStyle,
-    headerStyle
+    headerStyle,
+    iconCloseColor,
+    iconBackColor
   }) => {
     const { previousRoute, rootRoute, setRootRoute } = useStepNavigation()
     const pages = getPages(children)
@@ -165,6 +169,8 @@ function createProgressFlow<Param extends ParamListBase>() {
                 onPressClose={() => { navigation.navigate(closeRoute ?? rootRoute) }}
                 style={headerStyle}
                 titleStyle={titleStyle}
+                iconCloseColor={iconCloseColor}
+                iconBackColor={iconBackColor}
               />
               {currentPage.progressBar ?? (
                 <View style={{ width: '100%', backgroundColor: progressBarStyle?.backgroundColor }}>

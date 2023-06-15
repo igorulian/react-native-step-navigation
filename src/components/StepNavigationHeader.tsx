@@ -11,9 +11,11 @@ interface Props {
   onPressClose?: () => void
   style?: StyleProp<ViewStyle>
   titleStyle?: StyleProp<TextStyle>
+  iconCloseColor?: string
+  iconBackColor?: string
 }
 
-const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleStyle }: Props) => {
+const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleStyle, iconCloseColor, iconBackColor }: Props) => {
   const insets = useSafeAreaInsets()
   const frame = useSafeAreaFrame()
   const headerHeight = getDefaultHeaderHeight(frame, false, 0)
@@ -25,13 +27,13 @@ const StepNavigationHeader = ({ onPressBack, onPressClose, title, style, titleSt
       <View style={[styles.container, { height: headerHeight }, style]}>
 
         <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
-          <IconArrowLeft />
+          <IconArrowLeft color={iconBackColor}/>
         </TouchableOpacity>
 
         <Text style={[styles.title, titleStyle]}>{title}</Text>
 
         <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
-          <IconX />
+          <IconX color={iconCloseColor}/>
         </TouchableOpacity>
       </View>
     </View>
