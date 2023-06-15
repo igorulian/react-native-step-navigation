@@ -11,18 +11,18 @@ interface Props {
 
 const StepNavigationHeader = ({ onPressBack, onPressClose, title }: Props) => {
   return (
-        <View style={[styles.container]}>
+    <View style={[styles.container]}>
 
-        <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
-            <IconArrowLeft style={{ marginLeft: -3 }} />
-        </TouchableOpacity>
+      <TouchableOpacity onPress={onPressBack} style={styles.backbutton}>
+        <IconArrowLeft style={{ marginLeft: -3 }} />
+      </TouchableOpacity>
 
-        <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{title}</Text>
 
-        <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
-            <IconX style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}/>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={onPressClose} style={styles.Xbutton}>
+        <IconX style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}/>
+      </TouchableOpacity>
+    </View>
   )
 }
 

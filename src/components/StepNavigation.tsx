@@ -53,9 +53,9 @@ const createStepNavigation = (stack: any) => {
     closeRoute,
     header = true
   }) => {
-    const { rootRoute, goBack } = useStepNavigation()
+    const { rootRoute, previousRoute } = useStepNavigation()
     const pages = getPages(children)
-    const navigation = useNavigation()
+    const navigation = useNavigation<any>()
     const progressbar = useState(new Animated.Value((1 / pages.length) * 100))[0]
     const [currentPage, setCurrentPage] = useState(pages[0])
     const [progress, setProgress] = useState(0)
@@ -103,10 +103,28 @@ const createStepNavigation = (stack: any) => {
       outputRange: ['0%', '100%']
     })
 
-    // function goBack() {
-    //   console.log('[ACTION] goBack, to:', previousRoute)
-    //   navigation.navigate(previousRoute as never)
-    // }
+    function goBack() {
+      // const routes: any = []
+
+      // history.forEach(item => routes.push({ name: item }))
+
+      // navigation.reset({
+      //   index: history.length - 1,
+      //   routes
+      // })
+
+      // console.log({
+      //   index: history.length - 1,
+      //   routes
+      // })
+
+      // navigation.goBack()
+      // console.log('[ACTION] goBack, to:', previousRoute)
+      // console.log('parent', navigation.getParent())
+      // navigation.navigate('Step', { screen: previousRoute })
+      // console.log('Step', { screen: previousRoute })
+      navigation.navigate(previousRoute)
+    }
 
     function close() {
       console.log('[ACTION] close, to:', closeRoute ?? rootRoute)
