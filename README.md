@@ -6,7 +6,7 @@
 
 📚 React Native Step Navigation is a package that allows you to handle step-by-step navigation in React Native applications. It is designed to work seamlessly with Expo and Bare ReactNative, making it easy to integrate into your projects. 🚀
 
-![Example GIF](./preview.gif)
+![Example GIF](https://raw.githubusercontent.com/igorulian/react-native-step-navigation/main/preview.gif)
 
 
 For a complete example and more advanced usage, please refer to the [example folder](https://github.com/igorulian/react-native-step-navigation/tree/main/example) in this repository. 📂
