@@ -1,24 +1,18 @@
 {
-  "include": ["src", "types", "example/src"],
-  "exclude": ["example"],
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"],
   "compilerOptions": {
+    "target": "es2020",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
+    "moduleResolution": "bundler",
+    "jsx": "react",
+    "lib": ["esnext"],
     "declaration": true,
-    "sourceMap": true,
-    "rootDir": "./",
-    "outDir": "./example",
+    "outDir": "dist",
     "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
-    "jsx": "react",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "skipLibCheck": true
   }
 }
