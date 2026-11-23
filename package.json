@@ -1,34 +1,24 @@
 {
-  "version": "0.1.9",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=18"
   },
   "scripts": {
-    "start": "tsdx watch -outDir=example/test",
-    "build": "tsdx build",
-    "builddev": "tsdx build && rm -rf example/react-native-step-navigation && mv dist example/react-native-step-navigation",
-    "dev": "npm run dist -- -w",
-    "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why",
-    "deploy": "npm version patch && npm publish"
+    "build": "tsc",
+    "prepare": "tsc",
+    "test": "tsc --noEmit && node --experimental-strip-types src/getStep.test.ts"
   },
   "peerDependencies": {
-    "react": ">=16"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
+    "react": ">=18",
+    "react-native": ">=0.74",
+    "react-native-safe-area-context": ">=4",
+    "react-native-svg": ">=13"
   },
   "prettier": {
     "printWidth": 80,
@@ -38,42 +28,16 @@
   },
   "name": "react-native-step-navigation",
   "author": "Igor Ulian",
-  "module": "dist/react-native-step-navigation.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/react-native-step-navigation.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/react-native-step-navigation.esm.js",
-      "limit": "10 KB"
-    }
-  ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/react": "^18.2.8",
-    "@types/react-native": "^0.72.2",
-    "@typescript-eslint/eslint-plugin": "^5.59.9",
-    "eslint": "^8.42.0",
-    "eslint-config-standard-with-typescript": "^35.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "husky": "^8.0.3",
+    "@types/react": "^19.2.0",
     "prettier": "^2.8.8",
-    "react": "^18.2.0",
-    "react-native": "^0.71.8",
-    "size-limit": "^8.2.4",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.5.3",
-    "typescript": "^5.1.3"
+    "react": "19.2.3",
+    "react-native": "0.84.1",
+    "typescript": "^5.9.0",
+    "react-native-safe-area-context": "^5.11.1",
+    "react-native-svg": "^15.16.1"
   },
-  "dependencies": {
-    "@react-navigation/native": "^6.1.6",
-    "@react-navigation/stack": "^6.3.16",
-    "react-native-safe-area-context": "^4.5.3",
-    "react-native-screens": "^3.20.0",
-    "react-native-svg": "^13.9.0"
-  }
+  "description": "Step-by-step header with progress bar for React Navigation 7 and Expo Router",
+  "types": "dist/index.d.ts",
+  "react-native": "src/index.ts"
 }
