@@ -1,8 +1,1 @@
-{
-  "include": ["../src/*"],
-  "files": [ "../src/index.tsx" ],
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true
-  }
-}
+{ "extends": "expo/tsconfig.base", "compilerOptions": { "strict": true } }
