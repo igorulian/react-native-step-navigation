@@ -2,125 +2,111 @@
 
 [![npm version](https://img.shields.io/npm/v/react-native-step-navigation.svg)](https://www.npmjs.com/package/react-native-step-navigation)
 [![License](https://img.shields.io/npm/l/react-native-step-navigation.svg)](https://github.com/igorulian/react-native-step-navigation/blob/main/LICENSE)
-[![Runs with Expo](https://img.shields.io/badge/Runs%20with%20Expo-4630EB.svg?logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.io/)
+[![Runs with Expo](https://img.shields.io/badge/Runs%20with%20Expo-4630EB.svg?logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.dev/)
 
-📚 React Native Step Navigation is a package that allows you to handle step-by-step navigation in React Native applications. It is designed to work seamlessly with Expo and Bare ReactNative, making it easy to integrate into your projects. 🚀
+📚 A step-by-step header with an animated progress bar, for **React Navigation 7** and **Expo Router**. It's a plain `header` for any Stack, so there's no provider or custom navigator to set up.
 
 ![Example GIF](https://raw.githubusercontent.com/igorulian/react-native-step-navigation/main/preview.gif)
 
-
-For a complete example and more advanced usage, please refer to the [example folder](https://github.com/igorulian/react-native-step-navigation/tree/main/example) in this repository. 📂
-
 ## Installation
-
-You can install this package using npm or yarn. Make sure you have Expo installed in your project. 📦
 
 ```bash
 npm install react-native-step-navigation
 ```
 
-or
-
-```bash
-yarn add react-native-step-navigation
-```
+Peer dependencies (already in any Expo / React Navigation app): `react-native-safe-area-context`, `react-native-svg`.
 
 ## Usage
 
-To get started, import the `StepNavigationProvider` component from the package and use it to wrap your application.  ⚙️
+### Expo Router
 
-Important: the StepNavigationProvider must be wrapping your NavigationContainer
+Put the steps in a group and give its `_layout` the `StepHeader`:
 
-```javascript
-import { StepNavigationProvider } from './react-native-step-navigation'
-import AppRoutes from './src/routes/app.routes'
+```tsx
+// app/(signup)/_layout.tsx
+import { Stack } from 'expo-router'
+import { StepHeader } from 'react-native-step-navigation'
 
-export default function App() {
+export default function SignupLayout() {
   return (
-      <StepNavigationProvider>
-        <AppRoutes/>
-      </StepNavigationProvider>
+    <Stack screenOptions={{ header: (props) => <StepHeader {...props} /> }}>
+      {/* the declaration order is the step order */}
+      <Stack.Screen name="name" />
+      <Stack.Screen name="address" />
+      <Stack.Screen name="password" options={{ title: 'Almost done' }} />
+    </Stack>
   )
 }
 ```
 
-Now, where your NavigationContainer is, add the onStateChange function, which is exported by the useStepNavigation() hook
+In the parent layout, hide its own header for the group: `<Stack.Screen name="(signup)" options={{ headerShown: false }} />`.
 
-```javascript
-...
-import { useStepNavigation } from '../../react-native-step-navigation'
+Navigate between steps as usual (`router.push('/address')`, `<Link href="/address">`).
 
-const AppRoutes = () => {
-  const { onStateChange } = useStepNavigation()
+### React Navigation 7
 
+```tsx
+import { createNativeStackNavigator } from '@react-navigation/native-stack' // or @react-navigation/stack
+import { StepHeader } from 'react-native-step-navigation'
+
+const Step = createNativeStackNavigator()
+
+export function SignupSteps() {
   return (
-    <NavigationContainer onStateChange={onStateChange}>
-        [ ... your routes ... ]
-    </NavigationContainer>
-  )
-}
-
-export default AppRoutes
-```
-
-Now to use the Step Navigation, is very similar to the Stack navgation usage, you just have to create your step navigation object, lets name it
-"Step", wrap your screens with Step.Navigator, and then create your screens with Step.Screen.
-
-```javascript
-...
-import { createStepNavigation } from 'react-native-step-navigation'
-
-const Step = createStepNavigation()
-
-const StepRoutes = () => {
-  return (
-    <Step.Navigator>
-        <Step.Screen name='Step1' component={StepScreen}/>
-        <Step.Screen name='Step2' component={StepScreen2}/>
-        <Step.Screen name='Step3' component={StepScreen3}/>
-        <Step.Screen name='Step4' component={StepScreen4}/>
+    <Step.Navigator screenOptions={{ header: (props) => <StepHeader {...props} /> }}>
+      <Step.Screen name="Name" component={NameScreen} />
+      <Step.Screen name="Address" component={AddressScreen} />
+      <Step.Screen name="Password" component={PasswordScreen} />
     </Step.Navigator>
   )
 }
-
-export default StepRoutes
 ```
 
-## Props
+### Per-screen options
 
-### `StepNavigator` Props
+- **Title**: `options={{ title: '...' }}`. The default is `Step X of N`.
+- **Hide the header**: `options={{ headerShown: false }}`.
+- **Hide the progress bar**: `options={{ header: (p) => <StepHeader {...p} progressBar={false} /> }}`.
+- **A screen that isn't a step** (for example a summary): leave it out of `steps`. The header shows without a progress bar.
 
-| Prop              | Type                  | Description                                                      | Required |
-| ----------------- | --------------------- | ---------------------------------------------------------------- | -------- |
-| `closeRoute`      | `string`              | Route to navigate when the close button is pressed.              | No       |
-| `title`           | `string`              | Title to display in the header.                                  | No       |
-| `header`          | `boolean`             | Flag to show/hide the header.                                    | No       |
-| `progressBarStyle`| `IProgressBarStyle`   | Style object for customizing the progress bar appearance.         | No       |
-| `headerStyle`     | `ViewStyle`           | Style object for customizing the header container.                | No       |
-| `titleStyle`      | `TextStyle`           | Style object for customizing the title text.                      | No       |
-| `iconCloseColor`  | `string`              | Color of the close button icon.                                  | No       |
-| `iconBackColor`   | `string`              | Color of the back button icon.                                   | No       |
+## `StepHeader` props
 
-### `Step.Screen` Props
+`navigation`, `route` and `options` come from the stack's `header` callback. Spread `{...props}` to pass them.
 
-| Prop              | Type                  | Description                                                      | Required |
-| ----------------- | --------------------- | ---------------------------------------------------------------- | -------- |
-| `name`            | `string`              | Name of the screen.                                              | Yes      |
-| `component`       | `any`                 | Component to render for the step.                                | Yes       |
-| `header`          | `boolean`             | Flag to show/hide the header for the step.                       | No       |
-| `progressBar`     | `boolean`             | Flag to show/hide the progress bar for the step.                  | No       |
-| `style`           | `ViewStyle`           | Style object for customizing the step container.                  | No       |
-| `backRoute`       | `string`              | Route to navigate when the back button is pressed for the step.   | No       |
+| Prop               | Type                                        | Description                                                         |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------- |
+| `steps`            | `string[]`                                  | Step order. Defaults to the stack's route order.                    |
+| `onClose`          | `() => void`                                | Close button action. Defaults to leaving the step stack (`getParent().goBack()`). |
+| `progressBar`      | `boolean`                                   | Show the progress bar. Default `true`.                              |
+| `progressBarStyle` | `{ height?, color?, backgroundColor? }`     | Progress bar look.                                                  |
+| `style`            | `ViewStyle`                                 | Header container style.                                             |
+| `titleStyle`       | `TextStyle`                                 | Title style.                                                        |
+| `iconBackColor`    | `string`                                    | Back icon color.                                                    |
+| `iconCloseColor`   | `string`                                    | Close icon color.                                                   |
 
+On the first step, the back button behaves like close.
 
-## Dependencies
+`getStep(routeName, steps)` is exported too, if you want to build your own header: it returns `{ index, total, progress }`.
 
-## Contributing
+## Migrating from 0.x
 
-Contributions are welcome! If you have any bug reports, feature requests, or suggestions, please [create an issue](https://github.com/igorulian/react-native-step-navigation/issues) on GitHub.
+1.0 removes `StepNavigationProvider`, `useStepNavigation` and `createStepNavigation`. To migrate:
 
-If you want to contribute code, please follow the [contribution guidelines](https://github.com/igorulian/react-native-step-navigation/blob/main/CONTRIBUTING.md) in this repository.
+1. Remove `<StepNavigationProvider>` and `onStateChange` from your `NavigationContainer`.
+2. Replace `createStepNavigation()` with `createNativeStackNavigator()` (or `createStackNavigator()`), and pass `screenOptions={{ header: (p) => <StepHeader {...p} /> }}`.
+3. Move these props from `Step.Navigator` to `StepHeader`: `progressBarStyle`, `headerStyle` (now `style`), `titleStyle`, `iconBackColor`, `iconCloseColor`.
+4. Replace `closeRoute` with `onClose={() => navigation.navigate('Route')}`.
+5. Replace `title` with `options.title`.
+6. On `Step.Screen`, replace `header={false}` with `options={{ headerShown: false }}`.
+
+## Example
+
+`example/` is an Expo Router app that uses `src/` directly:
+
+```bash
+cd example && npm install && npm start
+```
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/igorulian/react-native-step-navigation/blob/main/LICENSE). 📜
+[MIT](LICENSE) 📜
