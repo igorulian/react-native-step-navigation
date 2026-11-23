@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { ReactNode, useEffect, useRef } from 'react'
 import { Animated, Easing, Platform, StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import IconArrowLeft from './icons/IconArrowLeft'
@@ -14,7 +14,14 @@ export interface StepHeaderProps {
   route: { name: string }
   options: { title?: string }
   steps?: string[]
+  formatTitle?: (step: number, total: number) => string
+  onBack?: () => void
   onClose?: () => void
+  showBack?: boolean
+  showClose?: boolean
+  right?: ReactNode
+  backIcon?: ReactNode
+  closeIcon?: ReactNode
   progressBar?: boolean
   progressBarStyle?: { height?: number, color?: string, backgroundColor?: string }
   style?: StyleProp<ViewStyle>
@@ -23,12 +30,21 @@ export interface StepHeaderProps {
   iconCloseColor?: string
 }
 
+const defaultTitle = (step: number, total: number) => `Step ${step} of ${total}`
+
 export function StepHeader({
   navigation,
   route,
   options,
   steps,
+  formatTitle = defaultTitle,
+  onBack,
   onClose,
+  showBack = true,
+  showClose = true,
+  right,
+  backIcon,
+  closeIcon,
   progressBar = true,
   progressBarStyle,
   style,
@@ -40,27 +56,34 @@ export function StepHeader({
   const state = navigation.getState()
   const { index, total, progress } = getStep(route.name, steps ?? state.routeNames)
 
-  const anim = useRef(new Animated.Value(Math.max(index, 0) / total)).current
+  const anim = useRef(new Animated.Value(index < 0 ? 0 : index / total)).current
   useEffect(() => {
     Animated.timing(anim, { toValue: progress, duration: 300, easing: Easing.linear, useNativeDriver: false }).start()
   }, [anim, progress])
 
   const close = onClose ?? (() => navigation.getParent()?.goBack())
-  const back = () => { state.index > 0 ? navigation.goBack() : close() }
+  const back = onBack ?? (() => (state.index > 0 ? navigation.goBack() : close()))
 
-  const title = options.title ?? (index >= 0 ? `Step ${index + 1} of ${total}` : '')
+  const title = options.title ?? (index >= 0 ? formatTitle(index + 1, total) : '')
   const backgroundColor = StyleSheet.flatten(style)?.backgroundColor ?? '#FFF'
 
   return (
     <View style={{ paddingTop: insets.top, backgroundColor }}>
       <View style={[styles.container, style]}>
-        <TouchableOpacity onPress={back} style={styles.back} hitSlop={12} accessibilityRole="button" accessibilityLabel="Back">
-          <IconArrowLeft color={iconBackColor} />
-        </TouchableOpacity>
-        <Text style={[styles.title, titleStyle]}>{title}</Text>
-        <TouchableOpacity onPress={close} style={styles.close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
-          <IconX color={iconCloseColor} />
-        </TouchableOpacity>
+        {showBack && (
+          <TouchableOpacity onPress={back} style={styles.left} hitSlop={12} accessibilityRole="button" accessibilityLabel="Back">
+            {backIcon ?? <IconArrowLeft color={iconBackColor} />}
+          </TouchableOpacity>
+        )}
+        <Text style={[styles.title, titleStyle]} numberOfLines={1}>{title}</Text>
+        <View style={styles.right}>
+          {right}
+          {showClose && (
+            <TouchableOpacity onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Close">
+              {closeIcon ?? <IconX color={iconCloseColor} />}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
       {progressBar && index >= 0 && (
         <View style={{ backgroundColor: progressBarStyle?.backgroundColor }}>
@@ -86,7 +109,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E8E8E8',
     borderBottomWidth: 1
   },
-  title: { color: '#000', fontSize: 14, alignSelf: 'center' },
-  back: { position: 'absolute', left: 16 },
-  close: { position: 'absolute', right: 16 }
+  title: { color: '#000', fontSize: 14, alignSelf: 'center', maxWidth: '60%' },
+  left: { position: 'absolute', left: 16 },
+  right: { position: 'absolute', right: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }
 })

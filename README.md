@@ -64,10 +64,40 @@ export function SignupSteps() {
 
 ### Per-screen options
 
-- **Title**: `options={{ title: '...' }}`. The default is `Step X of N`.
+- **Title**: `options={{ title: '...' }}`. The default is `Step X of N` (change it with `formatTitle`).
 - **Hide the header**: `options={{ headerShown: false }}`.
-- **Hide the progress bar**: `options={{ header: (p) => <StepHeader {...p} progressBar={false} /> }}`.
+- **Anything else** (hide back, no progress bar, a custom back target): override `header` on that screen, e.g. `options={{ header: (p) => <StepHeader {...p} showBack={false} /> }}`.
 - **A screen that isn't a step** (for example a summary): leave it out of `steps`. The header shows without a progress bar.
+
+### Your app's own header
+
+Wrap `StepHeader` once with your app's defaults (language, icons, colors, analytics) and use the wrapper in every flow:
+
+```tsx
+import { StepHeader, StepHeaderProps } from 'react-native-step-navigation'
+
+export function FlowHeader(props: StepHeaderProps) {
+  return (
+    <StepHeader
+      formatTitle={(step, total) => `Etapa ${step} de ${total}`}
+      backIcon={<IconArrow />}
+      closeIcon={<IconClose />}
+      progressBarStyle={{ color: colors.primary }}
+      {...props}
+    />
+  )
+}
+
+// a flow with a help button and no close button
+<Stack.Navigator screenOptions={{ header: (p) => <FlowHeader {...p} right={<HelpButton />} showClose={false} /> }}>
+
+// a screen that goes back to a specific step (React Navigation 7: `popTo`, not `navigate`)
+<Stack.Screen
+  name="Times"
+  component={TimesScreen}
+  options={{ header: (p) => <FlowHeader {...p} onBack={() => p.navigation.popTo('HowOften')} /> }}
+/>
+```
 
 ## `StepHeader` props
 
@@ -76,15 +106,20 @@ export function SignupSteps() {
 | Prop               | Type                                        | Description                                                         |
 | ------------------ | ------------------------------------------- | ------------------------------------------------------------------- |
 | `steps`            | `string[]`                                  | Step order. Defaults to the stack's route order.                    |
+| `formatTitle`      | `(step, total) => string`                   | Default title when the screen has no `options.title`. `step` starts at 1. |
+| `onBack`           | `() => void`                                | Back button action. Defaults to `goBack()`; on the first step, same as close. |
 | `onClose`          | `() => void`                                | Close button action. Defaults to leaving the step stack (`getParent().goBack()`). |
+| `showBack`         | `boolean`                                   | Show the back button. Default `true`.                               |
+| `showClose`        | `boolean`                                   | Show the close button. Default `true`.                              |
+| `right`            | `ReactNode`                                 | Extra content before the close button (e.g. a help button).         |
+| `backIcon`         | `ReactNode`                                 | Replaces the back icon.                                             |
+| `closeIcon`        | `ReactNode`                                 | Replaces the close icon.                                            |
 | `progressBar`      | `boolean`                                   | Show the progress bar. Default `true`.                              |
 | `progressBarStyle` | `{ height?, color?, backgroundColor? }`     | Progress bar look.                                                  |
 | `style`            | `ViewStyle`                                 | Header container style.                                             |
 | `titleStyle`       | `TextStyle`                                 | Title style.                                                        |
-| `iconBackColor`    | `string`                                    | Back icon color.                                                    |
-| `iconCloseColor`   | `string`                                    | Close icon color.                                                   |
-
-On the first step, the back button behaves like close.
+| `iconBackColor`    | `string`                                    | Default back icon color.                                            |
+| `iconCloseColor`   | `string`                                    | Default close icon color.                                           |
 
 `getStep(routeName, steps)` is exported too, if you want to build your own header: it returns `{ index, total, progress }`.
 
