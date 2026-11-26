@@ -7,7 +7,8 @@ import { getStep } from './getStep'
 
 export interface StepHeaderProps {
   navigation: {
-    getState: () => { index: number, routeNames: string[] }
+    getState: () => { key: string, index: number, routeNames: string[] }
+    addListener: (type: 'focus', callback: () => void) => () => void
     goBack: () => void
     getParent: () => { goBack: () => void } | undefined
   }
@@ -29,6 +30,8 @@ export interface StepHeaderProps {
   iconBackColor?: string
   iconCloseColor?: string
 }
+
+const shownProgress = new Map<string, number>()
 
 const defaultTitle = (step: number, total: number) => `Step ${step} of ${total}`
 
@@ -56,10 +59,20 @@ export function StepHeader({
   const state = navigation.getState()
   const { index, total, progress } = getStep(route.name, steps ?? state.routeNames)
 
+  const stackKey = state.key
   const anim = useRef(new Animated.Value(index < 0 ? 0 : index / total)).current
   useEffect(() => {
-    Animated.timing(anim, { toValue: progress, duration: 300, easing: Easing.linear, useNativeDriver: false }).start()
-  }, [anim, progress])
+    if (index < 0) return
+    const animate = () => {
+      const from = shownProgress.get(stackKey) ?? index / total
+      if (from === progress) return
+      anim.setValue(from)
+      shownProgress.set(stackKey, progress)
+      Animated.timing(anim, { toValue: progress, duration: 300, easing: Easing.linear, useNativeDriver: false }).start()
+    }
+    animate()
+    return navigation.addListener('focus', animate)
+  }, [anim, navigation, stackKey, index, total, progress])
 
   const close = onClose ?? (() => navigation.getParent()?.goBack())
   const back = onBack ?? (() => (state.index > 0 ? navigation.goBack() : close()))
